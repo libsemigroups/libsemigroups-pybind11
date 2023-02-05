@@ -43,7 +43,6 @@ namespace libsemigroups {
     using Konieczny_         = Konieczny<T, S>;
     using DClass             = typename Konieczny_::DClass;
     using element_type       = typename Konieczny<T, S>::element_type;
-    using const_element_type = typename Konieczny<T, S>::const_element_type;
     using const_reference    = typename Konieczny<T, S>::const_reference;
     std::string pyclass_name = std::string("Konieczny") + typestr;
 
@@ -120,14 +119,14 @@ namespace libsemigroups {
         .def("kill", &Konieczny_::kill)
         .def("run", &Konieczny_::run)
         .def("run_for",
-             (void (Konieczny_::*)(std::chrono::nanoseconds)) & Runner::run_for)
+             (void(Konieczny_::*)(std::chrono::nanoseconds)) & Runner::run_for)
         .def("run_until",
-             (void (Konieczny_::*)(std::function<bool()>&)) & Runner::run_until)
+             (void(Konieczny_::*)(std::function<bool()>&)) & Runner::run_until)
         .def("report_every",
-             (void (Konieczny_::*)(std::chrono::nanoseconds))
+             (void(Konieczny_::*)(std::chrono::nanoseconds))
                  & Runner::report_every)
         .def("report_every",
-             (void (Konieczny_::*)(std::chrono::nanoseconds))
+             (void(Konieczny_::*)(std::chrono::nanoseconds))
                  & Runner::report_every)
         .def("report", &Konieczny_::report)
         .def("report_why_we_stopped", &Konieczny_::report_why_we_stopped)

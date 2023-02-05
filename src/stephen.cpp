@@ -187,15 +187,15 @@ namespace libsemigroups {
         .def("kill", &Stephen::kill, runner_doc_strings::kill)
         .def("run", &Stephen::run, runner_doc_strings::run)
         .def("run_for",
-             (void (Stephen::*)(std::chrono::nanoseconds)) & Runner::run_for,
+             (void(Stephen::*)(std::chrono::nanoseconds)) & Runner::run_for,
              py::arg("t"),
              runner_doc_strings::run_for)
         .def("run_until",
-             (void (Stephen::*)(std::function<bool()>&)) & Runner::run_until,
+             (void(Stephen::*)(std::function<bool()>&)) & Runner::run_until,
              py::arg("func"),
              runner_doc_strings::run_until)
         .def("report_every",
-             (void (Stephen::*)(std::chrono::nanoseconds))
+             (void(Stephen::*)(std::chrono::nanoseconds))
                  & Runner::report_every,
              py::arg("t"),
              runner_doc_strings::report_every)
@@ -203,9 +203,8 @@ namespace libsemigroups {
         .def("report_why_we_stopped",
              &Stephen::report_why_we_stopped,
              runner_doc_strings::report_why_we_stopped);
-
     m.def("accepts",
-          &stephen::accepts,
+          py::overload_cast<Stephen&, word_type const&>(&stephen::accepts),
           py::arg("s"),
           py::arg("w"),
           R"pbdoc(
