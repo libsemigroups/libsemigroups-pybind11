@@ -493,11 +493,15 @@ def test_singular_brauer_monoid_exceptions():
 
 
 def test_orientation_preserving_monoid():
-    s = orientation_preserving_monoid(6)
+    p = make(orientation_preserving_monoid(6))
+    p.alphabet(3)
+    presentation.replace_word(p, [], [2])
+    presentation.add_identity_rules(p, 2)
+    p.validate()
     tc = ToddCoxeter(congruence_kind.twosided)
     tc.set_number_of_generators(3)
-    for rule in s:
-        tc.add_pair(rule[0], rule[1])
+    for i in range(0, len(p.rules), 2):
+        tc.add_pair(p.rules[i], p.rules[i + 1])
     assert tc.number_of_classes() == 2742
 
 
@@ -511,11 +515,15 @@ def test_orientation_preserving_monoid_exceptions():
 
 
 def test_orientation_reversing_monoid():
-    s = orientation_reversing_monoid(5)
+    p = make(orientation_reversing_monoid(5))
+    p.alphabet(4)
+    presentation.replace_word(p, [], [3])
+    presentation.add_identity_rules(p, 3)
+    p.validate()
     tc = ToddCoxeter(congruence_kind.twosided)
     tc.set_number_of_generators(4)
-    for rule in s:
-        tc.add_pair(rule[0], rule[1])
+    for i in range(0, len(p.rules), 2):
+        tc.add_pair(p.rules[i], p.rules[i + 1])
     assert tc.number_of_classes() == 1015
 
 
