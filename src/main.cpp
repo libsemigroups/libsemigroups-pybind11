@@ -217,6 +217,7 @@ The valid values are:
     init_present(m);
     init_inverse_present(m);
     init_to_present(m);
+    init_sims(m);
     init_transf(m);
     init_ranges(m);
     init_words(m);
