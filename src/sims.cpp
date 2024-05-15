@@ -58,15 +58,16 @@ Defined in ``sims.hpp``.On this page we describe the functionality relating to t
 .. seealso::  :any:`SimsSettings` for the various things that can be set in a :any:`Sims1` object.)pbdoc");
 
     s1.def("__repr__", [](Sims1 const& d) {
+      // nr relations, call repr for presentation object
       std::string result = "<Sims1 with repr tbd>";
       return result;
     });
-    // TODO: uncomment once const_rcgp_iterator and const_cgp_iterator are added
-    // s.def("sims::const_rcgp_iterator",
+    // TODO: delete
+    // s1.def("sims::const_rcgp_iterator",
     //           &Sims1::sims::const_rcgp_iterator,
     //           R"pbdoc(
     // )pbdoc");
-    //     s.def("sims::const_cgp_iterator",
+    //     s1.def("sims::const_cgp_iterator",
     //           &Sims1::sims::const_cgp_iterator,
     //           R"pbdoc(
     // )pbdoc");
@@ -92,31 +93,35 @@ Constructs an instance from a presentation of any kind.The rules of the presenta
     s1.def(py::init<Sims1 const&>(), R"pbdoc(
 Default copy constructor.
 )pbdoc");
-    // TODO: Figure out why this stupid function won't work
-    //     s1.def("init",
-    //            &Sims1::init<Presentation<word_type> const&>,
-    //            py::arg("p"),
-    //            R"pbdoc(
-    // Reinitialize an existing Sims1 object.
-    //
-    // :param p: the presentation
-    // :type p: Presentation
-    // This function puts an object back into the same state as if it had been
-    // newly constructed from the presentation ``p``.
-    //
-    // :raises LibsemigroupsError:  if ``to_presentation(p)`` throws
-    //
-    // :raises LibsemigroupsError:  if ``p`` is not valid
-    //
-    // :raises LibsemigroupsError:  if ``p`` has 0-generators and 0-relations.
-    //
-    // .. seealso::  presentation(Presentation<word_type> const&)
-    //
-    //
-    // :returns: A reference to ``self``.
-    //
-    // :rtype: typename word_type
-    // )pbdoc");
+    // DONE: Figured out why this stupid function won't work, do a lambda every
+    // time it doesnt work automatically
+    s1.def(
+        "init",
+        [](Sims1& self, Presentation<word_type> const& p) {
+          return self.init(p);
+        },
+        py::arg("p"),
+        R"pbdoc(
+    Reinitialize an existing Sims1 object.
+
+    :param p: the presentation
+    :type p: Presentation
+    This function puts an object back into the same state as if it had been
+    newly constructed from the presentation ``p``.
+
+    :raises LibsemigroupsError:  if ``to_presentation(p)`` throws
+
+    :raises LibsemigroupsError:  if ``p`` is not valid
+
+    :raises LibsemigroupsError:  if ``p`` has 0-generators and 0-relations.
+
+    .. seealso::  presentation(Presentation<word_type> const&)
+
+
+    :returns: A reference to ``self``.
+
+    :rtype: typename word_type
+    )pbdoc");
     s1.def("number_of_congruences",
            &Sims1::number_of_congruences,
            py::arg("n"),
