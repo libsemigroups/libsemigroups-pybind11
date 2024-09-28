@@ -33,7 +33,7 @@
 
 // pybind11....
 // #include <pybind11/chrono.h>
-// #include <pybind11/functional.h>
+#include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 //  TODO uncomment/delete
@@ -44,8 +44,9 @@
 namespace py = pybind11;
 
 namespace libsemigroups {
-  using node_type = uint32_t;
-  using size_type = typename WordGraph<node_type>::size_type;
+  using node_type       = uint32_t;
+  using word_graph_type = WordGraph<node_type>;
+  using size_type       = typename word_graph_type::size_type;
 
   // TODO: for repr, implement to_string function (check what James did in
   // actions.cpp, also knuth-bendix.cpp, there might be other things which have
@@ -286,6 +287,31 @@ Returns a const reference to the set of pruners.A pruner is any function that ta
 :returns: A const reference to ``std::vector>`` , the set of all pruners.
 
 :rtype: auto
+)pbdoc");
+    ss.def(
+        "add_pruner",
+        [](SimsSettings_& self, SimsRefinerIdeals func) {
+          return self.add_pruner(func);
+        },
+        R"pbdoc(
+           TODO
+)pbdoc");
+    ss.def(
+        "add_pruner",
+        [](SimsSettings_& self, SimsRefinerFaithful func) {
+          return self.add_pruner(func);
+        },
+        R"pbdoc(
+           TODO
+)pbdoc");
+    ss.def(
+        "add_pruner",
+        [](SimsSettings_&                              self,
+           std::function<bool(word_graph_type const&)> func) {
+          return self.add_pruner(func);
+        },
+        R"pbdoc(
+           TODO
 )pbdoc");
     ss.def("clear_pruners",
            &SimsSettings_::clear_pruners,
@@ -967,7 +993,7 @@ Defined in ``sims.hpp``.This class is a helper for :any:`Sims1` calling the :any
 *  the number of nodes in the :any:`WordGraph` is at least :any:`min_nodes` and at most :any:`max_nodes`.
 
 If no such :any:`WordGraph` can be found, then an empty :any:`WordGraph` is returned (with ``0`` nodes and ``0`` edges).)pbdoc");
-    ro.def("__repr__", [](Sims2 const& d) {
+    ro.def("__repr__", [](RepOrc const& d) {
       std::string result = "<RepOrc with repr tbd>";
       return result;
     });
@@ -1164,6 +1190,34 @@ RepOrc(* this )
 :rtype: Sims1::word_graph_type
 )pbdoc");
 
+    py::class_<SimsRefinerFaithful> srf(m,
+                                        "SimsRefinerFaithful",
+                                        R"pbdoc(
+For pruning the search tree when looking for congruences arising from right or two-sided congruences representing faithful actions.
+
+Defined in ``sims.hpp``.This class provides a pruner for pruning the search tree when looking for right congruences representing faithful actions. A right congruence represents a faithful action if and only if it does not contain any non-trivial two-sided congruence. Equivalently, a word graph of a right congruence represents a faithful action if and only if there is no nontrivial pair of words :math:`(u, v)` such that every vertex of the word graph is compatible with :math:`(u, v)`.
+
+.. seealso::  :any:`SimsSettings::pruners`
+
+.. seealso::  :any:`SimsSettings::add_pruner`)pbdoc");
+    srf.def("__repr__", [](SimsRefinerFaithful const& d) {
+      // nr relations, call repr for presentation object
+      std::string result = "<SimsRefinerFaithful with repr tbd>";
+      return result;
+    });
+    srf.def(py::init<std::vector<word_type> const&>(), R"pbdoc(
+Default constructor.
+Constructs a :any:`SimsRefinerFaithful` pruner with respect to the set of forbidden relations in ``forbid``.If ``forbid`` contains no trivial pairs (i.e. pairs of words that are equal in the underlying semigroup or monoid), then all word graphs rejected by :any:`SimsRefinerFaithful` are guaranteed to not be extendable to a word graph representing a faithful congruence. Otherwise, the pruner will incorrectly reject all word graphs.If in addition ``forbid`` is a set of relations containing all minimal congruence generating pairs of a given semigroup or monoid, then :any:`SimsRefinerFaithful` will also correctly determine if a complete word graph represents a faithful congruence. Otherwise, the complete word graphs accepted by :any:`SimsRefinerFaithful` are not guaranteed to be faithful and must be checked by some other means.)pbdoc");
+    srf.def(
+        "__call__",
+        [](SimsRefinerFaithful& d, word_graph_type const& wg) { return d(wg); },
+        // py::arg("wg"),
+        R"pbdoc(
+Check if a word graph can be extended to one defining a faithful congruence.
+Returns ``False`` if there is no way of adding edges and nodes to
+
+:wg:  which will result in a word graph defining a faithful congruence. Otherwise returns ``True``.)pbdoc");
+
     py::class_<SimsRefinerIdeals> sri(m,
                                       "SimsRefinerIdeals",
                                       R"pbdoc(
@@ -1187,9 +1241,7 @@ Default constructor.
 Constructs a :any:`SimsRefinerIdeals` pruner for the semigroup or monoid defined by ``p``.)pbdoc");
     sri.def(
         "__call__",
-        [](SimsRefinerIdeals& d, Sims1::word_graph_type const& wg) {
-          return d(wg);
-        },
+        [](SimsRefinerIdeals& d, word_graph_type const& wg) { return d(wg); },
         // py::arg("wg"),
         R"pbdoc(
 Check if a word graph can be extended to one defining a Rees congruence.

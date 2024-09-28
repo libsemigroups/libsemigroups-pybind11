@@ -14,7 +14,13 @@ arising from sims.*pp in libsemigroups.
 # pylint: disable=no-name-in-module, missing-function-docstring, invalid-name
 
 
-from libsemigroups_pybind11 import Sims1, Sims2, Presentation, presentation
+from libsemigroups_pybind11 import (
+    Sims1,
+    Sims2,
+    Presentation,
+    presentation,
+    SimsRefinerIdeals,
+)
 
 
 def test_sims1_001():
@@ -28,14 +34,12 @@ def test_sims1_001():
     presentation.add_rule(p, [1, 3], [1, 1])
     sims = Sims1(p)
     assert sims.number_of_congruences(2) == 67
-    # FIXME: make number of threads work
     assert sims.number_of_threads(2).number_of_congruences(2) == 67
     assert sims.number_of_threads(4).number_of_congruences(2) == 67
     assert sims.number_of_threads(8).number_of_congruences(2) == 67
 
 
 def test_sims1_002():
-    # FIXME: support string presentations
     p = Presentation("abcd")
     presentation.add_rule(p, "bcb", "bb")
     presentation.add_rule(p, "dd", "bb")
@@ -95,3 +99,50 @@ def test_sims2_002():
     assert sims.number_of_threads(2).number_of_congruences(4) == 117
     assert sims.number_of_threads(4).number_of_congruences(4) == 117
     assert sims.number_of_threads(8).number_of_congruences(4) == 117
+
+
+def test_sims_refiner_ideals_001():
+    p = Presentation([0, 1, 2])
+    p.contains_empty_word(True)
+    presentation.add_rule(p, [0, 0], [])
+    presentation.add_rule(p, [0, 2], [2])
+    presentation.add_rule(p, [1, 1], [1])
+    presentation.add_rule(p, [2, 0], [2])
+    presentation.add_rule(p, [2, 2], [2])
+    presentation.add_rule(p, [1, 2, 1], [1])
+    presentation.add_rule(p, [2, 1, 2], [2])
+    presentation.add_rule(p, [0, 1, 0, 1], [1, 0, 1])
+    presentation.add_rule(p, [1, 0, 1, 0], [1, 0, 1])
+
+    ip = SimsRefinerIdeals(p)
+
+    s = Sims1(p)
+    s.add_pruner(ip)
+    assert s.number_of_congruences(15) == 15
+    # FIXME: Fix issue with deadlocks when using pruners
+    assert s.number_of_threads(2).number_of_congruences(15) == 15
+    # assert s.number_of_threads(4).number_of_congruences(15) == 15
+    # assert s.number_of_threads(8).number_of_congruences(15) == 15
+
+
+def test_sims_refiner_ideals_002():
+    p = Presentation([0, 1])
+    presentation.add_rule(p, [0, 0, 0], [1, 1])
+    presentation.add_rule(p, [0, 0, 1], [1, 0])
+
+    sims = Sims2(p)
+    pruner = SimsRefinerIdeals(sims.presentation())
+    sims.add_pruner(pruner)
+    assert sims.number_of_congruences(1) == 1
+    assert sims.number_of_congruences(2) == 3
+    assert sims.number_of_congruences(3) == 5
+    assert sims.number_of_congruences(4) == 7
+    assert sims.number_of_congruences(5) == 9
+    assert sims.number_of_congruences(6) == 11
+    assert sims.number_of_congruences(7) == 12
+    for n in range(8, 20):
+        assert sims.number_of_congruences(n) == 12
+    # FIXME: Fix issue with deadlocks when using pruners
+    # assert sims.number_of_threads(2).number_of_congruences(7) == 12
+    # assert sims.number_of_threads(4).number_of_congruences(7) == 12
+    # assert sims.number_of_threads(8).number_of_congruences(7) == 12
