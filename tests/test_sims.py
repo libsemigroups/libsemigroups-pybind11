@@ -20,6 +20,7 @@ from libsemigroups_pybind11 import (
     Presentation,
     presentation,
     SimsRefinerIdeals,
+    SimsRefinerFaithful,
 )
 
 
@@ -119,10 +120,12 @@ def test_sims_refiner_ideals_001():
     s = Sims1(p)
     s.add_pruner(ip)
     assert s.number_of_congruences(15) == 15
-    # FIXME: Fix issue with deadlocks when using pruners
     assert s.number_of_threads(2).number_of_congruences(15) == 15
     # assert s.number_of_threads(4).number_of_congruences(15) == 15
     # assert s.number_of_threads(8).number_of_congruences(15) == 15
+
+
+test_sims_refiner_ideals_001()
 
 
 def test_sims_refiner_ideals_002():
@@ -142,7 +145,29 @@ def test_sims_refiner_ideals_002():
     assert sims.number_of_congruences(7) == 12
     for n in range(8, 20):
         assert sims.number_of_congruences(n) == 12
-    # FIXME: Fix issue with deadlocks when using pruners
-    # assert sims.number_of_threads(2).number_of_congruences(7) == 12
-    # assert sims.number_of_threads(4).number_of_congruences(7) == 12
-    # assert sims.number_of_threads(8).number_of_congruences(7) == 12
+    assert sims.number_of_threads(2).number_of_congruences(7) == 12
+    assert sims.number_of_threads(4).number_of_congruences(7) == 12
+    assert sims.number_of_threads(8).number_of_congruences(7) == 12
+
+
+# def test_sims_refiner_faithful_002():
+#     p = Presentation([0, 1])
+#     presentation.add_rule(p, [0, 0, 0], [1, 1])
+#     presentation.add_rule(p, [0, 0, 1], [1, 0])
+#
+#     sims = Sims2(p)
+#     pruner = SimsRefinerFaithful(sims.presentation())
+#     sims.add_pruner(pruner)
+#     assert sims.number_of_congruences(1) == 1
+#     assert sims.number_of_congruences(2) == 3
+#     assert sims.number_of_congruences(3) == 5
+#     assert sims.number_of_congruences(4) == 7
+#     assert sims.number_of_congruences(5) == 9
+#     assert sims.number_of_congruences(6) == 11
+#     assert sims.number_of_congruences(7) == 12
+#     for n in range(8, 20):
+#         assert sims.number_of_congruences(n) == 12
+#     # FIXME: Fix issue with deadlocks when using pruners
+#     # assert sims.number_of_threads(2).number_of_congruences(7) == 12
+#     # assert sims.number_of_threads(4).number_of_congruences(7) == 12
+#     # assert sims.number_of_threads(8).number_of_congruences(7) == 12
