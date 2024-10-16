@@ -58,7 +58,7 @@ namespace libsemigroups {
                                  R"pbdoc(
 For setting the presentation and various runtime parameters of the Sims low index algorithm.
 
-Defined in ``sims.hpp``.On this page we describe the :any:`SimsSettings` class. The purpose of this class is to allow us to use the same interface for settings for :any:`Sims1` , :any:`Sims2` , :any:`RepOrc` , and :any:`MinimalRepOrc`.
+Defined in ``sims.hpp``. On this page we describe the :any:`SimsSettings` class. The purpose of this class is to allow us to use the same interface for settings for :any:`Sims1` , :any:`Sims2` , :any:`RepOrc` , and :any:`MinimalRepOrc`.
 
 .. seealso::  :any:`Sims1`
 
@@ -1478,6 +1478,91 @@ TODO(0): document
           return py::make_iterator(rx::begin(gen_pairs), rx::end(gen_pairs));
         },
         py::arg("wg"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "two_sided_generating_pairs",
+        [](Presentation<word_type> const& p, word_graph_type const& wg) {
+          auto gen_pairs
+              = sims::two_sided_generating_pairs(p, wg)
+                | rx::transform([](auto x) -> relation_type { return x; });
+          return py::make_iterator(rx::begin(gen_pairs), rx::end(gen_pairs));
+        },
+        py::arg("p"),
+        py::arg("wg"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "two_sided_generating_pairs",
+        [](word_graph_type const& wg) {
+          auto gen_pairs
+              = sims::two_sided_generating_pairs(wg)
+                | rx::transform([](auto x) -> relation_type { return x; });
+          return py::make_iterator(rx::begin(gen_pairs), rx::end(gen_pairs));
+        },
+        py::arg("wg"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "is_right_congruence",
+        [](Presentation<word_type> const& p, word_graph_type const& wg) {
+          return sims::is_right_congruence(p, wg);
+        },
+        py::arg("p"),
+        py::arg("wg"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "is_right_congruence_of_dual",
+        [](Presentation<word_type> const& p, word_graph_type const& wg) {
+          return sims::is_right_congruence_of_dual(p, wg);
+        },
+        py::arg("p"),
+        py::arg("wg"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "is_two_sided_congruence",
+        [](Presentation<word_type> const& p, word_graph_type const& wg) {
+          return sims::is_two_sided_congruence(p, wg);
+        },
+        py::arg("p"),
+        py::arg("wg"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "is_maximal_right_congruence",
+        [](Presentation<word_type> const& p, word_graph_type const& wg) {
+          return sims::is_maximal_right_congruence(p, wg);
+        },
+        py::arg("p"),
+        py::arg("wg"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "poset",
+        [](Sims1& sims, size_t n) {
+          return sims::poset(sims.cbegin(n), sims.cend(n));
+        },
+        py::arg("sims"),
+        py::arg("n"),
+        R"pbdoc(
+TODO(0): document
+)pbdoc");
+    m.def(
+        "poset",
+        [](Sims2& sims, size_t n) {
+          return sims::poset(sims.cbegin(n), sims.cend(n));
+        },
+        py::arg("sims"),
+        py::arg("n"),
         R"pbdoc(
 TODO(0): document
 )pbdoc");

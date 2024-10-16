@@ -13,15 +13,19 @@ arising from sims.*pp in libsemigroups.
 
 # pylint: disable=no-name-in-module, missing-function-docstring, invalid-name
 
+import os
 import pytest
 
 from libsemigroups_pybind11 import (
-    sims,
-    Sims1,
-    Sims2,
+    Matrix,
+    MatrixKind,
+    MinimalRepOrc,
     Presentation,
     presentation,
     ReportGuard,
+    sims,
+    Sims1,
+    Sims2,
     SimsRefinerIdeals,
     SimsRefinerFaithful,
     word_graph,
@@ -29,6 +33,16 @@ from libsemigroups_pybind11 import (
     to_word_graph,
     LibsemigroupsError,
 )
+
+
+def check_right_generating_pairs(s, wg):
+    # TODO(1): Implement correct function once ToddCoxeter is ported.
+    assert True
+
+
+def check_meets_and_joins(it):
+    # TODO(1): Implement correct function once issue in libsemigroups is resolved.
+    assert True
 
 
 @pytest.mark.quick
@@ -71,8 +85,9 @@ def test_sims1_000():
 
     it = S.iterator(3)
     assert next(it) == to_word_graph(3, [[0, 0]])
-    # TODO: port check_right_generating_pairs once we have the file
-    # S.number_of_threads(1).for_each(5, lambda wg: check_right_generating_pairs(S, wg))
+    S.number_of_threads(1).for_each(
+        5, lambda wg: check_right_generating_pairs(S, wg)
+    )
     presentation.reverse(p)
     S = Sims1()
     assert S.presentation(p).number_of_congruences(5) == 9
@@ -80,20 +95,23 @@ def test_sims1_000():
         assert word_graph.follow_path(
             wg, 0, [1, 0, 1, 0]
         ) == word_graph.follow_path(wg, 0, [0])
-    # S.for_each(5,
-    #             [&S](auto const& wg) { check_right_generating_pairs(S, wg); });
-    # auto mat = sims::poset(S.cbegin(5), S.cend(5));
-    # REQUIRE(mat
-    #         == BMat<>({{0, 0, 0, 0, 0, 0, 0, 0, 0},
-    #                     {1, 0, 0, 0, 0, 0, 0, 0, 0},
-    #                     {1, 0, 0, 0, 0, 0, 0, 0, 0},
-    #                     {1, 0, 0, 0, 0, 0, 0, 0, 0},
-    #                     {0, 0, 1, 1, 0, 0, 0, 0, 0},
-    #                     {1, 0, 0, 0, 0, 0, 0, 0, 0},
-    #                     {0, 0, 0, 1, 0, 1, 0, 0, 0},
-    #                     {0, 1, 1, 0, 0, 1, 0, 0, 0},
-    #                     {0, 0, 0, 0, 1, 0, 1, 1, 0}}));
-    # check_meets_and_joins(S.cbegin(5), S.cend(5));
+    S.for_each(5, lambda wg: check_right_generating_pairs(S, wg))
+    mat = sims.poset(S, 5)
+    assert mat == Matrix(
+        MatrixKind.Boolean,
+        [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 0, 0, 0],
+            [0, 1, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 0],
+        ],
+    )
+    check_meets_and_joins(S.iterator(5))
 
 
 @pytest.mark.quick
@@ -153,8 +171,7 @@ def test_sims1_002():
     S = Sims1()
     S.presentation(p)
 
-    # S.for_each(3,
-    #            [&S](auto const& wg) { check_right_generating_pairs(S, wg); });
+    S.for_each(3, lambda wg: check_right_generating_pairs(S, wg))
 
     it = S.iterator(3)
     wg = next(it)
@@ -182,10 +199,10 @@ def test_sims1_002():
         ([6], [0]),
     ]
 
-    # check_right_generating_pairs(S, wg);
+    check_right_generating_pairs(S, wg)
 
     wg = next(it)
-    # check_right_generating_pairs(S, wg);
+    check_right_generating_pairs(S, wg)
     assert list(sims.right_generating_pairs(wg)) == [
         ([1], [0]),
         ([2], [0]),
@@ -241,6 +258,58 @@ def test_sims1_003():
     S = Sims1()
     S.presentation(p)
     assert S.number_of_congruences(3) == 14
+
+
+@pytest.mark.quick
+def test_sims1_004():
+    """partition_monoid(2) right"""
+    ReportGuard(False)
+    p = Presentation([0, 1, 2, 3])
+    p.contains_empty_word(False)
+
+    presentation.add_identity_rules(p, 0)
+    presentation.add_rule(p, [1, 1], [0])
+    presentation.add_rule(p, [1, 3], [3])
+    presentation.add_rule(p, [2, 2], [2])
+    presentation.add_rule(p, [3, 1], [3])
+    presentation.add_rule(p, [3, 3], [3])
+    presentation.add_rule(p, [2, 3, 2], [2])
+    presentation.add_rule(p, [3, 2, 3], [3])
+    presentation.add_rule(p, [1, 2, 1, 2], [2, 1, 2])
+    presentation.add_rule(p, [2, 1, 2, 1], [2, 1, 2])
+
+    S = Sims1(p)
+    assert S.number_of_congruences(2) == 4
+    assert S.number_of_congruences(3) == 7
+    assert S.number_of_congruences(4) == 14
+    assert S.number_of_congruences(5) == 23
+    assert S.number_of_congruences(6) == 36
+    assert S.number_of_congruences(7) == 51
+    assert S.number_of_congruences(8) == 62
+    assert S.number_of_congruences(9) == 74
+    assert S.number_of_congruences(10) == 86
+    assert S.number_of_congruences(11) == 95
+    assert S.number_of_congruences(12) == 100
+    assert S.number_of_congruences(13) == 102
+    assert S.number_of_congruences(14) == 104
+    assert S.number_of_congruences(15) == 105
+    assert S.number_of_congruences(16) == 105
+    assert S.number_of_congruences(17) == 105
+
+    T = Sims2()
+    T.presentation(p)
+    T.number_of_threads(2)
+    assert T.number_of_congruences(16) == 13
+
+    orc = MinimalRepOrc()
+    d = (
+        orc.presentation(p)
+        .target_size(15)
+        .number_of_threads(os.cpu_count())
+        .word_graph()
+    )
+
+    assert d.number_of_nodes() == 7
 
 
 def test_sims1_901():
