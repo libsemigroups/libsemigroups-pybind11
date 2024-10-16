@@ -161,7 +161,7 @@ type_replacements = {
         r"libsemigroups::DynamicMatrix<libsemigroups::IntegerPlus<long long>, "
         r"libsemigroups::IntegerProd<long long>, libsemigroups::IntegerZero"
         r"<long long>, libsemigroups::IntegerOne<long long>, long long>"
-    ): "Matrix",
+    ): r"Matrix",
 }
 
 # This dictionary should be of the form class_name -> (pattern, repl), where

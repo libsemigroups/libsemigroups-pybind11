@@ -73,6 +73,7 @@ See the installation instructions:
    main-algorithms/konieczny/index
    main-algorithms/radoszewski-rytter/index
    main-algorithms/schreier-sims/index
+   main-algorithms/sims/index
    main-algorithms/stephen/index
    main-algorithms/todd-coxeter/index
    main-algorithms/ukkonen/index
