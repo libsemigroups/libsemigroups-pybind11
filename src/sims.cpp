@@ -703,50 +703,54 @@ Set all statistics to zero.
                                               R"pbdoc(
 For computing finite index right congruences of a finitely presented semigroup or monoid.
 
-Defined in ``sims.hpp``.On this page we describe the functionality relating to the small index congruence algorithm for 1-sided congruences. The algorithm implemented by this class is essentially the low index subgroup algorithm for finitely presented groups described in Section 5.6 of`Computation with Finitely Presented Groups <https://doi.org/10.1017/CBO9780511574702>`_ by C. Sims. The low index subgroups algorithm was adapted for semigroups and monoids by R. Cirpons, J. D. Mitchell, and M. Tsalakou; see Anagnostopoulou-Merkouri2023aaThe purpose of this class is to provide the functions :any:`cbegin` , :any:`cend` , :any:`for_each` , and :any:`find_if` which permit iterating through the one-sided congruences of a semigroup or monoid defined by a presentation containing (a possibly empty) set of pairs and with at most a given number of classes. An iterator returned by :any:`cbegin` points at an :any:`WordGraph` instance containing the action of the semigroup or monoid on the classes of a congruence.
+The algorithm implemented by this class is essentially the low index subgroup algorithm
+for finitely presented groups described in Section 5.6 of :cite:`Sims1994aa`.
+The low index subgroups algorithm was adapted for semigroups and monoids by
+R. Cirpons, J. D. Mitchell, and M. Tsalakou; see :cite:`Anagnostopoulou-Merkouri2023aa`. 
 
-.. seealso::  :any:`Sims2` :any:`for` equivalent :any:`functionality` :any:`for` 2- :any:`sided` :any:`congruences`.
+The purpose of this class is to provide the functions :py:meth:`~Sims1.iterator`,
+:py:meth:`~Sims1.for_each` and :py:meth:`~Sims1.find_if`,
+which permit iterating through the one-sided congruences of a semigroup or monoid defined
+by a presentation containing (a possibly empty) set of pairs and with at most a given
+number of classes. An iterator returned by :py:meth:`~Sims1.iterator` yields :any:`WordGraph`
+instances representing the action of the semigroup or monoid on the classes of a congruence.
 
-.. seealso::  :any:`SimsSettings` :any:`for` :any:`the` :any:`various` :any:`things` :any:`that` :any:`can` :any:`be` set in a :any:`Sims1` :any:`object`.)pbdoc");
+.. seealso::  :any:`Sims2` for equivalent functionality for 2-sided congruences.)pbdoc");
 
     s1.def("__repr__",
            [](Sims1 const& s1) { return to_human_readable_repr(s1); });
     s1.def(py::init<>(), R"pbdoc(
 Default constructor.
 )pbdoc");
-    s1.def(py::init<Presentation<word_type> const&>(), R"pbdoc(
+    s1.def(py::init<Presentation<word_type> const&>(),
+           py::arg("p"),
+           R"pbdoc(
 Construct from a presentation.
 
-:param p: the presentation.
-:type p: Presentation<word_type>
-Constructs an instance from a word_type presentation. The rules of the presentation ``p`` are used at every node in the depth first search conducted by an object of this type.If the template parameter ``Word`` is not :any:`word_type` , then the parameter ``p`` is first converted to a value of type ``Presentation`` and it is this converted value that is used.
+The rules of the presentation ``p`` are used at every node in the
+depth first search conducted by an object of this type. 
 
-:raises LibsemigroupsError:  if ``to_presentation(p)`` throws
-
-:raises LibsemigroupsError:  if ``p`` is not valid
+:raises LibsemigroupsError:  if :any:`to_presentation` throws
 
 :raises LibsemigroupsError:  if ``p`` has 0-generators and 0-relations.
 
-.. seealso::  :any:`presentation`
-
-.. seealso::  :any:`init`)pbdoc");
-    s1.def(py::init<Presentation<std::string> const&>(), R"pbdoc(
+.. seealso::  :any:`presentation`, :py:meth:`~Sims1.init`)pbdoc");
+    s1.def(py::init<Presentation<std::string> const&>(),
+           py::arg("p"),
+           R"pbdoc(
 Construct from a presentation.
 
-:param p: the presentation
-:type p: Presentation<std::string>
-Constructs an instance from a std::string presentation. The rules of the presentation ``p`` are used at every node in the depth first search conducted by an object of this type.If the template parameter ``Word`` is not :any:`word_type` , then the parameter ``p`` is first converted to a value of type ``Presentation`` and it is this converted value that is used.
+The rules of the presentation ``p`` are used at every node in the
+depth first search conducted by an object of this type. 
 
-:raises LibsemigroupsError:  if ``to_presentation(p)`` throws
-
-:raises LibsemigroupsError:  if ``p`` is not valid
+:raises LibsemigroupsError:  if :any:`to_presentation` throws
 
 :raises LibsemigroupsError:  if ``p`` has 0-generators and 0-relations.
 
-.. seealso::  :any:`presentation`
-
-.. seealso::  :any:`init`)pbdoc");
-    s1.def(py::init<Sims1 const&>(), R"pbdoc(
+.. seealso::  :any:`presentation`, :py:meth:`~Sims1.init`)pbdoc");
+    s1.def(py::init<Sims1 const&>(),
+           py::arg("other"),
+           R"pbdoc(
 Default copy constructor.
 )pbdoc");
     s1.def(
