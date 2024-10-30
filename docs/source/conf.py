@@ -162,6 +162,8 @@ type_replacements = {
         r"libsemigroups::IntegerProd<long long>, libsemigroups::IntegerZero"
         r"<long long>, libsemigroups::IntegerOne<long long>, long long>"
     ): r"Matrix",
+    r"libsemigroups::Sims1": r"Sims1",
+    r"SimsSettingsSims1": r"Sims1",
 }
 
 # This dictionary should be of the form class_name -> (pattern, repl), where
@@ -185,6 +187,10 @@ class_specific_replacements = {
     "FroidurePinPBR": [(r"\bPBR\b", "Element")],
     "SchreierSimsPerm1": [(r"\bPerm1\b", "Element")],
     "ReversiblePaths": [(r"\bPaths\b", "ReversiblePaths")],
+    "Sims1": [("SubclassType", "Sims1")],
+    "Sims2": [("SubclassType", "Sims2")],
+    "RepOrc": [("SubclassType", "RepOrc")],
+    "MinimalRepOrc": [("SubclassType", "MinimalRepOrc")],
 }
 
 # This is what sphinx considers to be a signature
