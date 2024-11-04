@@ -34,6 +34,14 @@ Contents
 .. autosummary::
    :nosignatures:
 
+   ~Sims1
+   ~Sims2
+   ~RepOrc
+   ~MinimalRepOrc
+   ~SimsStats
+   ~SimsRefinerFaithful
+   ~SimsRefinerIdeals
+
 Full API
 --------
 
@@ -52,3 +60,17 @@ Full API
 .. autoclass:: MinimalRepOrc
    :members:
    :inherited-members:
+
+.. autoclass:: SimsStats
+   :members:
+   :inherited-members:
+
+.. autoclass:: SimsRefinerFaithful
+   :members:
+   :inherited-members:
+   :special-members: __call__
+
+.. autoclass:: SimsRefinerIdeals
+   :members:
+   :inherited-members:
+   :special-members: __call__
