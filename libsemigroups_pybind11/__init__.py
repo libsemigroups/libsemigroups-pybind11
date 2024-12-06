@@ -66,6 +66,12 @@ try:
         PBR,
         Ukkonen,
         tril,
+        Sims1,
+        Sims2,
+        RepOrc,
+        MinimalRepOrc,
+        SimsRefinerFaithful,
+        SimsRefinerIdeals,
     )
 except ModuleNotFoundError as e:
     raise ModuleNotFoundError(

@@ -42,6 +42,7 @@ namespace libsemigroups {
   void init_present(py::module&);
   void init_inverse_present(py::module&);
   void init_to_present(py::module&);
+  void init_sims(py::module&);
   void init_transf(py::module&);
   void init_ranges(py::module&);
   void init_words(py::module&);
