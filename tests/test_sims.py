@@ -32,11 +32,47 @@ from libsemigroups_pybind11 import (
     WordGraph,
     to_word_graph,
     LibsemigroupsError,
+    ToddCoxeter,
+    todd_coxeter,
+    congruence_kind,
+    Order,
 )
 
 
 def check_right_generating_pairs(s, wg):
-    # TODO(1): Implement correct function once ToddCoxeter is ported.
+    # TODO(1): Implement correct function once we have Felsch graphs in pybind11
+    # tc = ToddCoxeter(congruence_kind.onesided, s.presentation())
+    #
+    # for u, v in sims.right_generating_pairs(wg):
+    #     tc.add_generating_pair(u, v)
+    # tc.run()
+    #
+    # tc.standardize(Order.shortlex)
+    # expected = tc.word_graph()
+    # result = wg.copy()
+    #
+    # assert expected.number_of_nodes() >= result.number_of_active_nodes()
+    #
+    # expected = expected.induced_subgraph_no_checks(
+    #     0, result.number_of_active_nodes()
+    # )
+    # result = result.induced_subgraph_no_checks(
+    #     0, result.number_of_active_nodes()
+    # )
+    # assert result == expected
+    #
+    # tc.init(congruence_kind.onesided, s.presentation())
+    # for u, v in sims.right_generating_pairs(s.presentation(), wg):
+    #     tc.add_generating_pair(u, v)
+    # tc.run()
+    # tc.standardize(Order.shortlex)
+    # expected = tc.word_graph()
+    # assert expected.number_of_nodes() >= result.number_of_active_nodes()
+    #
+    # expected = expected.induced_subgraph_no_checks(
+    #     0, result.number_of_active_nodes()
+    # )
+    # assert result == expected
     assert True
 
 
@@ -312,6 +348,60 @@ def test_sims1_004():
     assert d.number_of_nodes() == 7
 
 
+@pytest.mark.quick
+def test_sims_refiner_faithful_128():
+
+    ReportGuard(True)
+    p = Presentation([0, 1])
+    p.contains_empty_word(True)
+    presentation.add_rule(p, [0, 0, 0], [0])
+    presentation.add_rule(p, [1, 1, 1], [])
+    presentation.add_rule(p, [0, 1, 1], [1, 0])
+
+    forbid = [[0], [0, 1], [0, 0], []]
+    pruno = SimsRefinerFaithful(forbid)
+
+    S = Sims1()
+    S.presentation(p)
+    S.add_pruner(pruno)
+    assert (
+        S.number_of_threads(2).number_of_congruences(9) == 4
+    )  # Verified with GAP
+
+    it = S.iterator(9)
+
+    wg = next(it)
+    assert wg == to_word_graph(
+        9, [[1, 2], [1, 3], [4, 5], [4, 4], [3, 1], [3, 0]]
+    )
+
+    wg = next(it)
+    assert wg == to_word_graph(
+        9, [[1, 2], [3, 3], [4, 5], [1, 4], [4, 1], [3, 0]]
+    )
+    wg = next(it)
+    assert wg == to_word_graph(
+        9, [[1, 2], [3, 4], [3, 5], [1, 1], [4, 3], [4, 0]]
+    )
+    wg = next(it)
+    assert wg == to_word_graph(
+        9,
+        [
+            [1, 2],
+            [3, 4],
+            [5, 6],
+            [1, 7],
+            [8, 5],
+            [7, 1],
+            [4, 0],
+            [5, 8],
+            [4, 3],
+        ],
+    )
+    with pytest.raises(StopIteration):
+        next(it)
+
+
 def test_sims1_901():
     ReportGuard(False)
     p = Presentation(list(range(4)))
@@ -437,26 +527,3 @@ def test_sims_refiner_ideals_902():
     assert sims.number_of_threads(2).number_of_congruences(7) == 12
     assert sims.number_of_threads(4).number_of_congruences(7) == 12
     assert sims.number_of_threads(8).number_of_congruences(7) == 12
-
-
-# def test_sims_refiner_faithful_002():
-#     p = Presentation([0, 1])
-#     presentation.add_rule(p, [0, 0, 0], [1, 1])
-#     presentation.add_rule(p, [0, 0, 1], [1, 0])
-#
-#     sims = Sims2(p)
-#     pruner = SimsRefinerFaithful(sims.presentation())
-#     sims.add_pruner(pruner)
-#     assert sims.number_of_congruences(1) == 1
-#     assert sims.number_of_congruences(2) == 3
-#     assert sims.number_of_congruences(3) == 5
-#     assert sims.number_of_congruences(4) == 7
-#     assert sims.number_of_congruences(5) == 9
-#     assert sims.number_of_congruences(6) == 11
-#     assert sims.number_of_congruences(7) == 12
-#     for n in range(8, 20):
-#         assert sims.number_of_congruences(n) == 12
-#     # FIXME: Fix issue with deadlocks when using pruners
-#     # assert sims.number_of_threads(2).number_of_congruences(7) == 12
-#     # assert sims.number_of_threads(4).number_of_congruences(7) == 12
-#     # assert sims.number_of_threads(8).number_of_congruences(7) == 12
